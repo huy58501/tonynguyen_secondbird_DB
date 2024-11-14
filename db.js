@@ -25,7 +25,7 @@ const connectDB = async () => {
 };
 
 // Function to get products with category filter
-const getProducts = async (categories = []) => {
+const getBooks = async (categories = []) => {
     try {
         let query = 'SELECT * FROM Book';
         
@@ -52,5 +52,5 @@ const getProducts = async (categories = []) => {
 // Export the connection and product fetching functions
 module.exports = {
     connectDB,
-    getProducts
+    getBooks
 };

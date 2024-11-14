@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors'); // Import cors
-const { connectDB, getProducts } = require('./db');
+const { connectDB, getBooks } = require('./db');
 const path = require('path');
 
 const app = express();
@@ -23,7 +23,7 @@ app.get('/api/data', async (req, res) => {
     const categoryArray = categories ? categories.split(',') : []; // Split the categories into an array
 
     try {
-        const products = await getProducts(categoryArray); // Pass categories to the database function
+        const products = await getBooks(categoryArray); // Pass categories to the database function
         res.json(products);
     } catch (err) {
         console.error('Error retrieving products:', err); // Log the error
