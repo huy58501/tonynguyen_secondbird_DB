@@ -15,19 +15,18 @@ connectDB();
 // Use CORS middleware to allow requests from different origins
 app.use(cors());
 
-// Middleware to serve static files (React build for production)
+// Serve static files (React build for production)
 app.use(express.static(path.join(__dirname, 'public', 'build')));
 
 // Route to get all books with optional category filter
 app.get('/api/data', async (req, res) => {
-    console.log("Received a request for /api/data");
-
-    const { categories } = req.query; // Get categories from the query parameter
-    const categoryArray = categories ? categories.split(',').map(category => category.trim()) : []; // Split categories into an array
+    const { categories } = req.query; // Get categories from query parameter
+    const categoryArray = categories ? categories.split(',').map(category => category.trim()) : []; // Convert categories to an array
 
     try {
-        const books = await getBooks(categoryArray); // Fetch books from the database
-        res.status(200).json(books); // Return books as a JSON response
+        // Fetch books from the database with optional filtering by category
+        const books = await getBooks(categoryArray); 
+        res.status(200).json(books); // Return books as JSON response
     } catch (err) {
         console.error('Error retrieving books:', err);
         res.status(500).send('Error retrieving books');
@@ -36,15 +35,16 @@ app.get('/api/data', async (req, res) => {
 
 // Route to add a new book to the database
 app.post('/api/add', async (req, res) => {
-    console.log("Received a request at /api/add"); // Log the incoming request
     const { EntryID, Title, Author, Genre, PublicationDate, ISBN } = req.body;
 
+    // Check if all required fields are provided
     if (!EntryID || !Title || !Author || !Genre || !PublicationDate || !ISBN) {
         return res.status(400).send('Missing required fields');
     }
 
     try {
-        await addBook({ EntryID, Title, Author, Genre, PublicationDate, ISBN }); // Add book to DB
+        // Add the new book to the database
+        await addBook({ EntryID, Title, Author, Genre, PublicationDate, ISBN });
         res.status(201).send('Book added successfully');
     } catch (err) {
         console.error('Error adding book:', err);
@@ -57,7 +57,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'build', 'index.html'));
 });
 
-// Health check route
+// Health check route to verify if the server is up and running
 app.get('/health', (req, res) => {
     res.status(200).send('OK');
 });
