@@ -24,7 +24,7 @@ const connectDB = async () => {
     }
 };
 
-// Function to get products with category filter
+// Function to get books with an optional category filter
 const getBooks = async (categories = []) => {
     try {
         let query = 'SELECT * FROM Book';
@@ -44,13 +44,34 @@ const getBooks = async (categories = []) => {
         const result = await request.query(query);
         return result.recordset;
     } catch (err) {
-        console.error('Error fetching products:', err);
+        console.error('Error fetching books:', err);
         throw err;
     }
 };
 
-// Export the connection and product fetching functions
+// Function to add a new book to the database
+const addBook = async ({ EntryID, Title, Author, Genre, PublicationDate, ISBN }) => {
+    try {
+        const request = new sql.Request();
+        request.input('EntryID', sql.Int, EntryID);
+        request.input('Title', sql.VarChar, Title);
+        request.input('Author', sql.VarChar, Author);
+        request.input('Genre', sql.VarChar, Genre);
+        request.input('PublicationDate', sql.Date, PublicationDate);
+        request.input('ISBN', sql.NVarChar, ISBN);
+
+        const query = `INSERT INTO Book (Title, Author, Genre, PublicationDate, ISBN)
+                       VALUES (@Title, @Author, @Genre, @PublicationDate, @ISBN)`;
+        await request.query(query);
+    } catch (err) {
+        console.error('Error adding book to the database:', err);
+        throw err;
+    }
+};
+
+// Export the connection and book functions
 module.exports = {
     connectDB,
-    getBooks
+    getBooks,
+    addBook
 };
